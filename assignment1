@@ -1,0 +1,110 @@
+#Part 1
+
+#function to calculate pollutant mean
+pollutantmean <- function(directory, pollutant, id = 1:332){
+  #create list of files with correct path
+  files_full <- list.files("specdata", full.names = TRUE)
+  #create empty data frame
+  dat <- data.frame()
+  #run loop that reads files specifed in id and bind them into new file
+  for (i in id) {
+    dat <- rbind(dat, read.csv(files_full[i]))
+  }
+  #calculate mean from subset above for specificed pollutant
+  mean(dat[, pollutant], na.rm = TRUE)
+
+}
+
+
+#Part 2
+complete <- function(directory, id = 1:332) {
+  #create list of files with correct path
+  files_full <- list.files("specdata", full.names = TRUE)
+  
+  #run loop that sums up complete cases
+  nobs <- numeric()
+  idx <- 1
+  for (i in id) {
+    nobs[idx] <- sum(complete.cases(read.csv(files_full[i])))
+    
+    idx <- idx +1
+  }
+
+  part2 <- data.frame(id, nobs)
+  part2
+}
+
+
+#Part3
+corr <- function(directory, threshold = 0) {
+  crt <- vector(mode = "numeric", length = 332)
+  dat <- data.frame()
+  dat2 <- data.frame()
+  nobs <- numeric()
+  idx <- 1
+  
+  for (i in 1:332) {
+    dat <- rbind(dat, read.csv(files_full[i]))
+  }
+
+    dat2 <- dat[complete.cases(dat),]
+
+    for (i in 1:332) {
+      nobs[i] <- nrow(dat2[dat2$ID == i,])
+    
+    if(nobs[i] > threshold) 
+      crt[i] <- cor(dat2$sulfate[dat2$ID == i], dat2$nitrate[dat2$ID == i])
+      else 
+      crt[i] <- NA
+    }
+    crt
+}
+
+#pratice code
+cr <- corr("specdata", 2000)
+cr <- sort(cr)
+n <- length(cr)
+print(n)
+print(cr)
+
+
+for (i in 1:332) {
+    crt[i] <- cor(dat2$sulfate[dat2$ID == i], dat2$nitrate[dat2$ID == i])
+}
+
+crt <- cor(dat2$sulfate[dat2$ID == "2"], dat2$nitrate[dat2$ID == "2"])
+cor(top10$Age[top10$Gender == "F"], top10$Count[top10$Gender == "F"])
+
+
+sum(dat2$nitrate[dat2$ID == "2",])
+cor(dat2$sulfate, dat2$nitrate)
+
+
+
+#question 7
+set.seed(42)
+cc <- complete("specdata", 332:1)
+use <- sample(332, 10)
+print(cc[use, "nobs"])
+
+#question 8
+cr <- corr("specdata")                
+cr <- sort(cr)              
+set.seed(868)
+out <- round(cr[sample(length(cr), 5)], 4)
+print(out)
+
+#question 9
+cr <- corr("specdata", 129)                
+cr <- sort(cr)              
+n <- length(cr)    
+set.seed(197)
+out <- c(n, round(cr[sample(n, 5)], 4))
+print(out)
+
+#question 10
+cr <- corr("specdata", 2000)                
+n <- length(cr)               
+cr <- corr("specdata", 1000)                
+cr <- sort(cr)
+print(c(n, round(cr, 4)))
