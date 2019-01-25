@@ -36,24 +36,26 @@ complete <- function(directory, id = 1:332) {
 
 
 #Part3
+#create functiont that will find the cor of sulfate and nitrate only in stations with enough observations
 corr <- function(directory, threshold = 0) {
   crt <- vector(mode = "numeric", length = 332)
   dat <- data.frame()
-  dat2 <- data.frame()
   nobs <- numeric()
   idx <- 1
+  
   
   for (i in 1:332) {
     dat <- rbind(dat, read.csv(files_full[i]))
   }
-
-    dat2 <- dat[complete.cases(dat),]
-
+  #clean data for only complete cases
+    dat <- dat[complete.cases(dat),]
+    
+#run loop with if/else statment that only includes data above indicated threshold; produce correlation for pollutants that are above threshold
     for (i in 1:332) {
-      nobs[i] <- nrow(dat2[dat2$ID == i,])
+      nobs[i] <- nrow(dat[dat$ID == i,])
     
     if(nobs[i] > threshold) 
-      crt[i] <- cor(dat2$sulfate[dat2$ID == i], dat2$nitrate[dat2$ID == i])
+      crt[i] <- cor(dat$sulfate[dat$ID == i], dat$nitrate[dat$ID == i])
       else 
       crt[i] <- NA
     }
